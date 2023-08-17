@@ -4,11 +4,8 @@ import com.goide.psi.GoArrayOrSliceType
 import com.goide.psi.GoMapType
 import com.goide.psi.GoPointerType
 import com.goide.psi.GoType
-import java.awt.Toolkit
 import java.util.*
 import java.util.regex.Pattern
-import javax.swing.JDialog
-import javax.swing.JFrame
 
 object Utils {
     fun uToLine(text: String): String {
@@ -29,23 +26,29 @@ object Utils {
         if (-1 != index) {
             temp = temp.substring(index + 1)
         }
-
-
+        if (temp.startsWith("_")) {
+            temp = temp.substring(1)
+        }
         return temp
     }
 
-    fun toType(typ: GoType): String {
+    fun toType(typ: GoType, b: Boolean): String {
         if (typ is GoArrayOrSliceType) {
-            return "repeated " + toType(typ.type)
+            return "repeated " + toType(typ.type, false)
         } else if (typ is GoMapType) {
-            return "map<" + toType(typ.keyType!!) + ", " + toType(typ.valueType!!) + ">"
+            return "map<" + toType(typ.keyType!!, true) + ", " + toType(typ.valueType!!, true) + ">"
         } else if (typ is GoPointerType) {
-            return "optional " + toType(typ.type!!)
+            if (b) {
+                return "optional " + toType(typ.type!!, true)
+            }
+            return toType(typ.type!!, true)
         }
         var text = typ.presentationText
         if (text == "int") {
             return "int32"
+        } else if (text == "int8") {
+            return "int32"
         }
-        return text
+        return uToLine(text)
     }
 }

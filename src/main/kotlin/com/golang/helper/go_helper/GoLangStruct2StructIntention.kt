@@ -1,16 +1,18 @@
 package com.golang.helper.go_helper
 
 import com.goide.intentions.GoBaseIntentionAction
-import com.goide.psi.*
-import com.intellij.codeInsight.intention.HighPriorityAction
+import com.goide.psi.GoStructType
+import com.goide.psi.GoTypeSpec
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 
-class GoLangStruct2ProtobufIntention : GoBaseIntentionAction(), HighPriorityAction {
+class GoLangStruct2StructIntention : GoBaseIntentionAction() {
     override fun getFamilyName(): String {
-        return "struct to protobuf"
+        return "Struct to Struct"
     }
 
     override fun isAvailable(project: Project, editor: Editor?, element: PsiElement): Boolean {
@@ -24,32 +26,25 @@ class GoLangStruct2ProtobufIntention : GoBaseIntentionAction(), HighPriorityActi
         var struct = PsiTreeUtil.findChildOfType(type, GoStructType::class.java)
 
         var text = StringBuilder()
-        text.append("message ")
-        text.append(Utils.uToLine(type.identifier.text))
+        text.append(type.identifier.text)
 
         text.append(" {\n")
 
         var names = struct!!.fieldDefinitions
         var field = struct!!.fieldDeclarationList
 
-        var index = 1
         for (i in 0 until field.size) {
             if (null != field[i].type) {
                 text.append("\t")
-                text.append(Utils.toType(field[i].type!!, true))
-                text.append(" ")
-                text.append(Utils.uToLine(names[i].identifier!!.text))
-                text.append(" = ")
-                text.append(index)
-                text.append("; \n")
-                index++
+                text.append(names[i].identifier!!.text)
+                text.append(" : val.")
+                text.append(names[i].identifier!!.text)
+                text.append(", \n")
             }
         }
 
         text.append("}\n\n")
-
         WindowFactory.show(project, text.toString())
     }
-
 
 }

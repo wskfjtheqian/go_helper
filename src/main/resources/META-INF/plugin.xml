@@ -43,5 +43,9 @@
                 text="GoLangStruct2ProtobufAction">
             <add-to-group group-id="GoGenerateForStruct" anchor="first"/>
         </action>
+        <action id="golang.struct.struct.action" class="com.golang.helper.go_helper.GoLangStruct2StructAction"
+                text="GoLangStruct2Struct">
+            <add-to-group group-id="GoGenerateForStruct" anchor="first"/>
+        </action>
     </actions>
 </idea-plugin>

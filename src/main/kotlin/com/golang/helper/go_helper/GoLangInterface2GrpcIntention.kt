@@ -58,7 +58,7 @@ class GoLangInterface2GrpcIntention : GoBaseIntentionAction() {
         var index = 0
         for (i in 0 until parameters.size) {
             text.append("\t")
-            text.append(Utils.uToLine(Utils.toType(parametersTypes[index].type!!)))
+            text.append(Utils.toType(parametersTypes[index].type!!, true))
             text.append(" ")
             text.append(Utils.uToLine(parameters[i].name!!))
             text.append(" = ")
@@ -82,7 +82,7 @@ class GoLangInterface2GrpcIntention : GoBaseIntentionAction() {
             if (result.type != null) {
                 if (result.type!!.text != "error") {
                     text.append("\t")
-                    text.append(Utils.uToLine(Utils.toType(result.type!!)))
+                    text.append(Utils.toType(result.type!!, true))
                     text.append(" ")
                     text.append("result")
                     text.append(" = ")
@@ -97,7 +97,7 @@ class GoLangInterface2GrpcIntention : GoBaseIntentionAction() {
                 for (i in 0 until parametersTypes.size) {
                     if (parametersTypes[i].type!!.text != "error") {
                         text.append("\t")
-                        text.append(Utils.uToLine(Utils.toType(parametersTypes[i].type!!)))
+                        text.append(Utils.toType(parametersTypes[i].type!!, true))
                         text.append(" ")
 
                         if (parameters != null && !parameters.isEmpty()) {
