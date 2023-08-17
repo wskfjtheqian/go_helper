@@ -33,32 +33,27 @@ class GoLangStruct2ProtobufIntention : GoBaseIntentionAction(), HighPriorityActi
 
         text.append(" {\n")
 
-        var names=struct!!.fieldDefinitions
-        var field=struct!!.fieldDeclarationList
+        var names = struct!!.fieldDefinitions
+        var field = struct!!.fieldDeclarationList
 
+        var index = 1
         for (i in 0 until field.size) {
-            text.append("\t")
-            text.append(Utils.uToLine(toType(field[i].type!!)))
-            text.append(" ")
-            text.append(Utils.uToLine(names[i].identifier!!.text))
-            text.append(" = ")
-            text.append(i+1)
-            text.append("; \n")
+            if (null != field[i].type) {
+                text.append("\t")
+                text.append(Utils.uToLine(Utils.toType(field[i].type!!)))
+                text.append(" ")
+                text.append(Utils.uToLine(names[i].identifier!!.text))
+                text.append(" = ")
+                text.append(index)
+                text.append("; \n")
+                index++
+            }
         }
 
         text.append("}\n\n")
 
-        WindowFactory.show(project,text.toString())
+        WindowFactory.show(project, text.toString())
     }
 
-    private fun toType(typ: GoType): String {
-        if(typ is GoArrayOrSliceType){
-            return "repeated " + typ.type.presentationText
-        } else if(typ is GoMapType){
-            return "map<" + typ.keyType!!.presentationText +", " + typ.valueType!!.presentationText +">"
-        }
-
-        return typ.presentationText
-    }
 
 }

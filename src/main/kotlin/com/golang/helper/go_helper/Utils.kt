@@ -1,5 +1,9 @@
 package com.golang.helper.go_helper
 
+import com.goide.psi.GoArrayOrSliceType
+import com.goide.psi.GoMapType
+import com.goide.psi.GoPointerType
+import com.goide.psi.GoType
 import java.awt.Toolkit
 import java.util.*
 import java.util.regex.Pattern
@@ -25,13 +29,23 @@ object Utils {
         if (-1 != index) {
             temp = temp.substring(index + 1)
         }
+
+
         return temp
     }
 
-    fun setJDialogToCenter(dialog: JFrame) {
-        val screenSize = Toolkit.getDefaultToolkit().screenSize //获取屏幕的尺寸
-        val screenWidth = screenSize.width //获取屏幕的宽
-        val screenHeight = screenSize.height //获取屏幕的高
-        dialog.setLocation(screenWidth / 2 - dialog.width / 2, screenHeight / 2 - dialog.height / 2)//设置窗口居中显示
+    fun toType(typ: GoType): String {
+        if (typ is GoArrayOrSliceType) {
+            return "repeated " + toType(typ.type)
+        } else if (typ is GoMapType) {
+            return "map<" + toType(typ.keyType!!) + ", " + toType(typ.valueType!!) + ">"
+        } else if (typ is GoPointerType) {
+            return "optional " + toType(typ.type!!)
+        }
+        var text = typ.presentationText
+        if (text == "int") {
+            return "int32"
+        }
+        return text
     }
 }
