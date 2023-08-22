@@ -47,5 +47,9 @@
                 text="GoLangStruct2Struct">
             <add-to-group group-id="GoGenerateForStruct" anchor="first"/>
         </action>
+        <action id="golang.grpc.implement.action" class="com.golang.helper.go_helper.GoLangGrpcImplementAction"
+                text="GoLangGrpcImplement" description="GoLangGrpcImplement">
+            <add-to-group group-id="GoGenerateForStruct" anchor="first"/>
+        </action>
     </actions>
 </idea-plugin>
