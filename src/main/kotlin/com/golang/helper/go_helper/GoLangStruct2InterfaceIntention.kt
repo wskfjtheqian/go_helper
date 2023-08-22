@@ -27,6 +27,7 @@ class GoLangStruct2InterfaceIntention : GoBaseIntentionAction(), HighPriorityAct
         var type = PsiTreeUtil.findFirstParent(element) { element -> element is GoTypeSpec } as GoTypeSpec
 
         var text = StringBuilder()
+        text.append(Utils.commentToBack(Utils.getFieldComment(type.parent)))
         text.append("type ")
         text.append(type.identifier.text)
 
@@ -34,6 +35,11 @@ class GoLangStruct2InterfaceIntention : GoBaseIntentionAction(), HighPriorityAct
 
         var methods = type!!.methods
         for (i in 0 until methods.size) {
+            var comm = Utils.commentToBack(Utils.getFieldComment(methods[i]))
+            if(comm.isNotEmpty()){
+                text.append("\t")
+                text.append(comm)
+            }
             text.append("\t")
             text.append(toFunc(methods[i]))
             text.append(" \n\n")

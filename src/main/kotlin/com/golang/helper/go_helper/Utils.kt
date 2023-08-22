@@ -4,8 +4,12 @@ import com.goide.psi.GoArrayOrSliceType
 import com.goide.psi.GoMapType
 import com.goide.psi.GoPointerType
 import com.goide.psi.GoType
+import com.goide.psi.impl.GoCommentImpl
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiWhiteSpace
 import java.util.*
 import java.util.regex.Pattern
+import kotlin.collections.ArrayList
 
 object Utils {
     fun uToLine(text: String): String {
@@ -50,5 +54,42 @@ object Utils {
             return "int32"
         }
         return uToLine(text)
+    }
+
+    fun getFieldComment(element: PsiElement): MutableList<String> {
+        val list: MutableList<String> = ArrayList()
+        var next = element.prevSibling
+        while (null != next && (next is GoCommentImpl || next is PsiWhiteSpace)) {
+            if (next is GoCommentImpl) {
+                list.add(next.text.substring(2))
+            }
+            next = next.prevSibling
+        }
+
+        next = element
+        while (null != next && next.text.contains("\n")) {
+            if (next is GoCommentImpl) {
+                list.add(next.text.substring(2))
+                break
+            }
+            next = next.nextSibling
+        }
+        return list
+    }
+
+    fun commentToBack(list: MutableList<String>): String {
+        val buffer = StringBuffer()
+        list.forEach {
+            buffer.append("//").append(it).append("\n")
+        }
+        return buffer.toString()
+    }
+
+    fun commentToLine(list: MutableList<String>): String {
+        val buffer = StringBuffer()
+        list.forEach {
+            buffer.append(", ").append(it)
+        }
+        return buffer.insert(0,"\t//").toString()
     }
 }

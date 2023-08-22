@@ -23,6 +23,7 @@ class GoLangInterface2GrpcIntention : GoBaseIntentionAction() {
         var iface = PsiTreeUtil.findChildOfType(type, GoInterfaceType::class.java)
 
         var text = StringBuilder()
+        text.append(Utils.commentToBack(Utils.getFieldComment(type.parent)))
         text.append("service ")
         text.append(Utils.uToLine(type.identifier.text))
 
@@ -30,6 +31,11 @@ class GoLangInterface2GrpcIntention : GoBaseIntentionAction() {
 
         var msg = StringBuilder()
         iface!!.methods.forEach {
+            var comm = Utils.commentToBack(Utils.getFieldComment(it))
+            if (comm.isNotEmpty()) {
+                text.append("\t")
+                text.append(comm)
+            }
             text.append("\t rpc ")
             text.append(Utils.uToLine(it.name!!))
             text.append("(")
@@ -38,22 +44,28 @@ class GoLangInterface2GrpcIntention : GoBaseIntentionAction() {
             text.append(Utils.uToLine(it.name!!))
             text.append("_resp); \n\n")
 
-            toReq(msg, it)
-            toResp(msg, it)
+            toReq(msg, it, comm)
+            toResp(msg, it, comm)
         }
 
         text.append("}\n\n")
 
-        WindowFactory.show(project,text.toString() + msg.toString())
+        WindowFactory.show(project, text.toString() + msg.toString())
     }
 
-    private fun toReq(text: StringBuilder, method: GoMethodSpec) {
+    private fun toReq(text: StringBuilder, method: GoMethodSpec, comm: String) {
+        if(comm.isNotEmpty()){
+            text.append(comm)
+            text.append("// 请求")
+            text.append("\n")
+        }
+
         text.append("message ")
         text.append(Utils.uToLine(method.name!!))
         text.append("_req { \n")
 
-        var parameters = method.signature!!.parameters.definitionList
-        var parametersTypes = method.signature!!.parameters.parameterDeclarationList
+        val parameters = method.signature!!.parameters.definitionList
+        val parametersTypes = method.signature!!.parameters.parameterDeclarationList
 
         var index = 0
         for (i in 0 until parameters.size) {
@@ -72,7 +84,12 @@ class GoLangInterface2GrpcIntention : GoBaseIntentionAction() {
         text.append("}\n\n")
     }
 
-    private fun toResp(text: StringBuilder, method: GoMethodSpec) {
+    private fun toResp(text: StringBuilder, method: GoMethodSpec, comm: String) {
+        if(comm.isNotEmpty()){
+            text.append(comm)
+            text.append("// 响应")
+            text.append("\n")
+        }
         text.append("message ")
         text.append(Utils.uToLine(method.name!!))
         text.append("_resp { \n")

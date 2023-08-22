@@ -39,6 +39,7 @@ class GoLangStruct2StructIntention : GoBaseIntentionAction() {
                 text.append(names[i].identifier!!.text)
                 text.append(" : val.")
                 text.append(names[i].identifier!!.text)
+                text.append(Utils.commentToLine(Utils.getFieldComment(field[i])))
                 text.append(", \n")
             }
         }

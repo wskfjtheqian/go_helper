@@ -24,6 +24,7 @@ class GoLangStruct2ProtobufIntention : GoBaseIntentionAction(), HighPriorityActi
         var struct = PsiTreeUtil.findChildOfType(type, GoStructType::class.java)
 
         var text = StringBuilder()
+        text.append(Utils.commentToBack(Utils.getFieldComment(type.parent)))
         text.append("message ")
         text.append(Utils.uToLine(type.identifier.text))
 
@@ -41,7 +42,9 @@ class GoLangStruct2ProtobufIntention : GoBaseIntentionAction(), HighPriorityActi
                 text.append(Utils.uToLine(names[i].identifier!!.text))
                 text.append(" = ")
                 text.append(index)
-                text.append("; \n")
+                text.append(";")
+                text.append(Utils.commentToLine(Utils.getFieldComment(field[i])))
+                text.append("\n")
                 index++
             }
         }
