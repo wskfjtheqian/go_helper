@@ -51,5 +51,10 @@
                 text="GoLangGrpcImplement" description="GoLangGrpcImplement">
             <add-to-group group-id="GoGenerateForStruct" anchor="first"/>
         </action>
+        <action id="golang.name.transform.action" class="com.golang.helper.go_helper.GolangNameTransformAction"
+                text="NameTransform" description="NameTransform">
+            <keyboard-shortcut first-keystroke="ctrl 1" keymap="$default"/>
+            <add-to-group group-id="EditorActions" anchor="first"/>
+        </action>
     </actions>
 </idea-plugin>
