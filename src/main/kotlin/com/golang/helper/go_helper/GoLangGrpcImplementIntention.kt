@@ -14,29 +14,29 @@ class GoLangGrpcImplementIntention : GoBaseIntentionAction(), HighPriorityAction
     }
 
     override fun isAvailable(project: Project, editor: Editor?, element: PsiElement): Boolean {
-        var element = PsiTreeUtil.findFirstParent(element) { element -> element is GoTypeSpec }
-        var iface = PsiTreeUtil.findChildOfType(element, GoInterfaceType::class.java)
+        val type = PsiTreeUtil.findFirstParent(element) { it is GoTypeSpec }
+        val iface = PsiTreeUtil.findChildOfType(type, GoInterfaceType::class.java)
         return null != iface
     }
 
     override fun invoke(project: Project, editor: Editor?, element: PsiElement) {
-        var method = PsiTreeUtil.findFirstParent(element) { element -> element is GoMethodSpec } as GoMethodSpec
+        val method = PsiTreeUtil.findFirstParent(element) { it is GoMethodSpec } as GoMethodSpec?
         if (null != method) {
             WindowFactory.show(project, toMethod(method))
             return
         }
 
-        var type = PsiTreeUtil.findFirstParent(element) { element -> element is GoTypeSpec } as GoTypeSpec
-        var iface = PsiTreeUtil.findChildOfType(type, GoInterfaceType::class.java)
+        val type = PsiTreeUtil.findFirstParent(element) { element is GoTypeSpec } as GoTypeSpec
+        val iface = PsiTreeUtil.findChildOfType(type, GoInterfaceType::class.java)
 
-        var text = StringBuilder()
+        val text = StringBuilder()
         text.append(Utils.commentToBack(Utils.getFieldComment(type.parent)))
         text.append("service ")
         text.append(Utils.nameUnderline(Utils.deletePackage(Utils.deletePackage(type.identifier.text))))
 
         text.append(" {\n")
 
-        var msg = StringBuilder()
+        val msg = StringBuilder()
         iface!!.methods.forEach {
             text.append(toMethod(it))
         }
@@ -50,23 +50,28 @@ class GoLangGrpcImplementIntention : GoBaseIntentionAction(), HighPriorityAction
         if (method == null) {
             return "";
         }
-        var text = StringBuilder()
+        val text = StringBuilder()
+        var comm = Utils.commentToBack(Utils.getFieldComment(method))
+        if (comm.isNotEmpty()) {
+            text.append("\t")
+            text.append(comm)
+        }
         text.append("func (s *Server) ")
         text.append(Utils.nameCapitalized(method.name!!))
-        text.append("(ctx, rep *proto.")
+        text.append("(ctx context.Context, rep *proto.")
         text.append(Utils.nameCapitalized(method.name!!))
-        text.append("Rep) (*proto.")
+        text.append("Req) (*proto.")
         text.append(Utils.nameCapitalized(method.name!!))
-        text.append(", error) {\n")
+        text.append("Resp, error) {\n")
         text.append("\t")
 
         toVal(text, method)
 
-        text.append(" err := u.Repo.")
+        text.append(" err := s.Repo.")
         text.append(Utils.nameCapitalized(method.name!!))
         text.append("(ctx, \n")
         toReq(text, method)
-        text.append(")\n")
+        text.append("\t)\n")
         text.append("\tif err != nil {\n")
         text.append("\t\treturn nil, err\n")
         text.append("\t}\n")
@@ -86,11 +91,10 @@ class GoLangGrpcImplementIntention : GoBaseIntentionAction(), HighPriorityAction
             text.append(Utils.nameCapitalized(parameters[i].name!!))
             text.append("(), \n")
         }
-        text.append("\t}")
     }
 
     private fun toVal(text: StringBuilder, method: GoMethodSpec) {
-        var result = method.signature!!.result
+        val result = method.signature!!.result
         if (null != result) {
             if (result.type != null) {
                 if (result.type!!.text != "error") {
@@ -101,13 +105,16 @@ class GoLangGrpcImplementIntention : GoBaseIntentionAction(), HighPriorityAction
                 val parameters = result.parameters!!.definitionList
                 val parametersTypes = result.parameters!!.parameterDeclarationList
 
+                var index = 1
                 for (i in 0 until parametersTypes.size) {
                     if (parametersTypes[i].type!!.text != "error") {
                         if (parameters.isNotEmpty()) {
                             text.append(Utils.nameLowercase(parameters[i].identifier.text))
                         } else {
                             text.append("result")
+                            text.append(index)
                         }
+                        index++
                         text.append(", ")
                     }
                 }
@@ -118,7 +125,7 @@ class GoLangGrpcImplementIntention : GoBaseIntentionAction(), HighPriorityAction
 
     private fun toResp(text: StringBuilder, method: GoMethodSpec) {
         text.append(Utils.nameCapitalized(method.name!!))
-        text.append(" { \n")
+        text.append("Resp { \n")
 
         var result = method.signature!!.result
         if (null != result) {
@@ -131,6 +138,7 @@ class GoLangGrpcImplementIntention : GoBaseIntentionAction(), HighPriorityAction
                 val parameters = result.parameters!!.definitionList
                 val parametersTypes = result.parameters!!.parameterDeclarationList
 
+                var index = 1
                 for (i in 0 until parametersTypes.size) {
                     if (parametersTypes[i].type!!.text != "error") {
                         text.append("\t\t")
@@ -139,8 +147,12 @@ class GoLangGrpcImplementIntention : GoBaseIntentionAction(), HighPriorityAction
                             text.append(": ")
                             text.append(Utils.nameLowercase(parameters[i].identifier.text))
                         } else {
-                            text.append("Result: result")
+                            text.append("Result")
+                            text.append(index)
+                            text.append(": result")
+                            text.append(index)
                         }
+                        index++
                         text.append(", \n")
                     }
                 }

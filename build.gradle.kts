@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.golang.helper"
-version = "1.1.１-SNAPSHOT"
+version = "1.1.2-SNAPSHOT"
 
 repositories {
     mavenCentral()
