@@ -3,8 +3,6 @@ package com.golang.helper.go_helper
 import com.goide.intentions.GoBaseIntentionAction
 import com.goide.psi.*
 import com.intellij.codeInsight.intention.HighPriorityAction
-import com.intellij.openapi.actionSystem.AnAction
-import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
@@ -34,7 +32,7 @@ class GoLangGrpcImplementIntention : GoBaseIntentionAction(), HighPriorityAction
         var text = StringBuilder()
         text.append(Utils.commentToBack(Utils.getFieldComment(type.parent)))
         text.append("service ")
-        text.append(Utils.uToLine(type.identifier.text))
+        text.append(Utils.nameUnderline(type.identifier.text))
 
         text.append(" {\n")
 
@@ -54,18 +52,18 @@ class GoLangGrpcImplementIntention : GoBaseIntentionAction(), HighPriorityAction
         }
         var text = StringBuilder()
         text.append("func (s *Server) ")
-        text.append(method.name)
+        text.append(Utils.nameCapitalized(method.name!!))
         text.append("(ctx, rep *proto.")
-        text.append(method.name)
+        text.append(Utils.nameCapitalized(method.name!!))
         text.append("Rep) (*proto.")
-        text.append(method.name)
+        text.append(Utils.nameCapitalized(method.name!!))
         text.append(", error) {\n")
         text.append("\t")
 
         toVal(text, method)
 
         text.append(" err := u.Repo.")
-        text.append(method.name!!)
+        text.append(Utils.nameCapitalized(method.name!!))
         text.append("(ctx, \n")
         toReq(text, method)
         text.append(")\n")
@@ -85,7 +83,7 @@ class GoLangGrpcImplementIntention : GoBaseIntentionAction(), HighPriorityAction
 
         for (i in 0 until parameters.size) {
             text.append("\t\trep.Get")
-            text.append(parameters[i].name!!)
+            text.append(Utils.nameCapitalized(parameters[i].name!!))
             text.append("(), \n")
         }
         text.append("\t}")
@@ -106,7 +104,7 @@ class GoLangGrpcImplementIntention : GoBaseIntentionAction(), HighPriorityAction
                 for (i in 0 until parametersTypes.size) {
                     if (parametersTypes[i].type!!.text != "error") {
                         if (parameters.isNotEmpty()) {
-                            text.append(parameters[i].identifier.text)
+                            text.append(Utils.nameLowercase(parameters[i].identifier.text))
                         } else {
                             text.append("result")
                         }
@@ -119,7 +117,7 @@ class GoLangGrpcImplementIntention : GoBaseIntentionAction(), HighPriorityAction
     }
 
     private fun toResp(text: StringBuilder, method: GoMethodSpec) {
-        text.append(Utils.uToLine(method.name!!))
+        text.append(Utils.nameCapitalized(method.name!!))
         text.append(" { \n")
 
         var result = method.signature!!.result
@@ -137,9 +135,9 @@ class GoLangGrpcImplementIntention : GoBaseIntentionAction(), HighPriorityAction
                     if (parametersTypes[i].type!!.text != "error") {
                         text.append("\t\t")
                         if (parameters.isNotEmpty()) {
-                            text.append(parameters[i].identifier.text)
+                            text.append(Utils.nameCapitalized(parameters[i].identifier.text))
                             text.append(": ")
-                            text.append(parameters[i].identifier.text)
+                            text.append(Utils.nameLowercase(parameters[i].identifier.text))
                         } else {
                             text.append("Result: result")
                         }

@@ -25,7 +25,7 @@ class GoLangInterface2GrpcIntention : GoBaseIntentionAction() {
         var text = StringBuilder()
         text.append(Utils.commentToBack(Utils.getFieldComment(type.parent)))
         text.append("service ")
-        text.append(Utils.uToLine(type.identifier.text))
+        text.append(Utils.nameUnderline(type.identifier.text))
 
         text.append(" {\n")
 
@@ -37,11 +37,11 @@ class GoLangInterface2GrpcIntention : GoBaseIntentionAction() {
                 text.append(comm)
             }
             text.append("\t rpc ")
-            text.append(Utils.uToLine(it.name!!))
+            text.append(Utils.nameUnderline(it.name!!))
             text.append("(")
-            text.append(Utils.uToLine(it.name!!))
+            text.append(Utils.nameUnderline(it.name!!))
             text.append("_req) returns (")
-            text.append(Utils.uToLine(it.name!!))
+            text.append(Utils.nameUnderline(it.name!!))
             text.append("_resp); \n\n")
 
             toReq(msg, it, comm)
@@ -61,7 +61,7 @@ class GoLangInterface2GrpcIntention : GoBaseIntentionAction() {
         }
 
         text.append("message ")
-        text.append(Utils.uToLine(method.name!!))
+        text.append(Utils.nameUnderline(method.name!!))
         text.append("_req { \n")
 
         val parameters = method.signature!!.parameters.definitionList
@@ -72,7 +72,7 @@ class GoLangInterface2GrpcIntention : GoBaseIntentionAction() {
             text.append("\t")
             text.append(Utils.toType(parametersTypes[index].type!!, true))
             text.append(" ")
-            text.append(Utils.uToLine(parameters[i].name!!))
+            text.append(Utils.nameUnderline(parameters[i].name!!))
             text.append(" = ")
             text.append(i + 1)
             text.append("; \n")
@@ -91,7 +91,7 @@ class GoLangInterface2GrpcIntention : GoBaseIntentionAction() {
             text.append("\n")
         }
         text.append("message ")
-        text.append(Utils.uToLine(method.name!!))
+        text.append(Utils.nameUnderline(method.name!!))
         text.append("_resp { \n")
 
         var result = method.signature!!.result
@@ -118,7 +118,7 @@ class GoLangInterface2GrpcIntention : GoBaseIntentionAction() {
                         text.append(" ")
 
                         if (parameters != null && !parameters.isEmpty()) {
-                            text.append(Utils.uToLine(parameters[i].identifier.text))
+                            text.append(Utils.nameUnderline(parameters[i].identifier.text))
                         } else {
                             text.append("result")
                             text.append(index)

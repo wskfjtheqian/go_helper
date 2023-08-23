@@ -12,28 +12,74 @@ import java.util.regex.Pattern
 import kotlin.collections.ArrayList
 
 object Utils {
-    fun uToLine(text: String): String {
-        val matcher = Pattern.compile("[A-Z_]").matcher(text)
+    //　下划线
+    fun nameUnderline(text: String): String {
+        val list: MutableList<String> = split(text)
+
+        val buffer = StringBuffer()
+        list.forEach {
+            var temp = it.replace("[_]+".toRegex(), "")
+            if (temp.isNotEmpty()) {
+                buffer.append("_")
+                buffer.append(temp.lowercase(Locale.getDefault()))
+            }
+        }
+        return buffer.substring(1)
+    }
+
+    //首字母大写
+    fun nameCapitalized(text: String): String {
+        val list: MutableList<String> = split(text)
+        val buffer = StringBuffer()
+        list.forEach {
+            var temp = it.replace("[_]+".toRegex(), "")
+            if (temp.isNotEmpty()) {
+                buffer.append(temp.substring(0, 1).uppercase(Locale.getDefault()))
+                buffer.append(temp.substring(1).lowercase(Locale.getDefault()))
+            }
+        }
+        return buffer.toString()
+    }
+
+
+    //首字母小写
+    fun nameLowercase(text: String): String {
+        val list: MutableList<String> = split(text)
         val buffer = StringBuffer()
         var index = 0
-        while (matcher.find()) {
-            buffer.append("_")
-            buffer.append(text.substring(index, matcher.start()))
-            index = matcher.start()
+        list.forEach {
+            var temp = it.replace("[_]+".toRegex(), "")
+            if (temp.isNotEmpty()) {
+                if (index == 0) {
+                    buffer.append(temp.substring(0, 1).lowercase(Locale.getDefault()))
+                } else {
+                    buffer.append(temp.substring(0, 1).uppercase(Locale.getDefault()))
+                }
+                buffer.append(temp.substring(1).lowercase(Locale.getDefault()))
+            }
         }
-        if (index < text.length) {
-            buffer.append("_")
-            buffer.append(text.substring(index))
-        }
-        var temp = buffer.toString().replace("[_]+".toRegex(), "_").substring(1).lowercase(Locale.getDefault())
-        index = temp.indexOf(".")
+        return buffer.toString()
+    }
+
+    private fun split(text: String): MutableList<String> {
+        var temp = text
+        var index = text.indexOf(".")
         if (-1 != index) {
             temp = temp.substring(index + 1)
         }
-        if (temp.startsWith("_")) {
-            temp = temp.substring(1)
+
+        val matcher = Pattern.compile("[A-Z_]").matcher(temp)
+        val list: MutableList<String> = ArrayList()
+
+        index = 0
+        while (matcher.find()) {
+            list.add(text.substring(index, matcher.start()))
+            index = matcher.start()
         }
-        return temp
+        if (index < text.length) {
+            list.add(text.substring(index))
+        }
+        return list
     }
 
     fun toType(typ: GoType, b: Boolean): String {
@@ -53,7 +99,7 @@ object Utils {
         } else if (text == "int8") {
             return "int32"
         }
-        return uToLine(text)
+        return nameUnderline(text)
     }
 
     fun getFieldComment(element: PsiElement): MutableList<String> {
@@ -90,6 +136,6 @@ object Utils {
         list.forEach {
             buffer.append(", ").append(it)
         }
-        return buffer.insert(0,"\t//").toString()
+        return buffer.insert(0, "\t//").toString()
     }
 }

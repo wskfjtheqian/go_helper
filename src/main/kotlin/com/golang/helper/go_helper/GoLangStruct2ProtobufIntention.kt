@@ -26,7 +26,7 @@ class GoLangStruct2ProtobufIntention : GoBaseIntentionAction(), HighPriorityActi
         var text = StringBuilder()
         text.append(Utils.commentToBack(Utils.getFieldComment(type.parent)))
         text.append("message ")
-        text.append(Utils.uToLine(type.identifier.text))
+        text.append(Utils.nameUnderline(type.identifier.text))
 
         text.append(" {\n")
 
@@ -39,7 +39,7 @@ class GoLangStruct2ProtobufIntention : GoBaseIntentionAction(), HighPriorityActi
                 text.append("\t")
                 text.append(Utils.toType(field[i].type!!, true))
                 text.append(" ")
-                text.append(Utils.uToLine(names[i].identifier!!.text))
+                text.append(Utils.nameUnderline(names[i].identifier!!.text))
                 text.append(" = ")
                 text.append(index)
                 text.append(";")
