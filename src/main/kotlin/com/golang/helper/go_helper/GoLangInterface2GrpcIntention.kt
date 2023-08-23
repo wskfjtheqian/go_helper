@@ -19,38 +19,47 @@ class GoLangInterface2GrpcIntention : GoBaseIntentionAction() {
     }
 
     override fun invoke(project: Project, editor: Editor?, element: PsiElement) {
-        var type = PsiTreeUtil.findFirstParent(element) { element -> element is GoTypeSpec } as GoTypeSpec
-        var iface = PsiTreeUtil.findChildOfType(type, GoInterfaceType::class.java)
+        val text = StringBuilder()
+        val msg = StringBuilder()
+        val method = PsiTreeUtil.findFirstParent(element) { element -> element is GoMethodSpec } as GoMethodSpec?
 
-        var text = StringBuilder()
-        text.append(Utils.commentToBack(Utils.getFieldComment(type.parent)))
-        text.append("service ")
-        text.append(Utils.nameUnderline(type.identifier.text))
+        if (null != method) {
+            extracted(method, text, msg)
+        }else{
+            var type = PsiTreeUtil.findFirstParent(element) { element -> element is GoTypeSpec } as GoTypeSpec
+            var iface = PsiTreeUtil.findChildOfType(type, GoInterfaceType::class.java)
 
-        text.append(" {\n")
+            text.append(Utils.commentToBack(Utils.getFieldComment(type.parent)))
+            text.append("service ")
+            text.append(Utils.nameUnderline(type.identifier.text))
 
-        var msg = StringBuilder()
-        iface!!.methods.forEach {
-            var comm = Utils.commentToBack(Utils.getFieldComment(it))
-            if (comm.isNotEmpty()) {
-                text.append("\t")
-                text.append(comm)
+            text.append(" {\n")
+
+            iface!!.methods.forEach {
+                extracted(it, text, msg)
             }
-            text.append("\t rpc ")
-            text.append(Utils.nameUnderline(it.name!!))
-            text.append("(")
-            text.append(Utils.nameUnderline(it.name!!))
-            text.append("_req) returns (")
-            text.append(Utils.nameUnderline(it.name!!))
-            text.append("_resp); \n\n")
-
-            toReq(msg, it, comm)
-            toResp(msg, it, comm)
+            text.append("}\n\n")
         }
 
-        text.append("}\n\n")
-
         WindowFactory.show(project, text.toString() + msg.toString())
+    }
+
+    private fun extracted(it: GoMethodSpec, text: StringBuilder, msg: StringBuilder) {
+        var comm = Utils.commentToBack(Utils.getFieldComment(it))
+        if (comm.isNotEmpty()) {
+            text.append("\t")
+            text.append(comm)
+        }
+        text.append("\t rpc ")
+        text.append(Utils.nameUnderline(Utils.deletePackage(it.name!!)))
+        text.append("(")
+        text.append(Utils.nameUnderline(Utils.deletePackage(it.name!!)))
+        text.append("_req) returns (")
+        text.append(Utils.nameUnderline(Utils.deletePackage(it.name!!)))
+        text.append("_resp); \n\n")
+
+        toReq(msg, it, comm)
+        toResp(msg, it, comm)
     }
 
     private fun toReq(text: StringBuilder, method: GoMethodSpec, comm: String) {

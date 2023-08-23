@@ -32,7 +32,7 @@ class GoLangGrpcImplementIntention : GoBaseIntentionAction(), HighPriorityAction
         var text = StringBuilder()
         text.append(Utils.commentToBack(Utils.getFieldComment(type.parent)))
         text.append("service ")
-        text.append(Utils.nameUnderline(type.identifier.text))
+        text.append(Utils.nameUnderline(Utils.deletePackage(Utils.deletePackage(type.identifier.text))))
 
         text.append(" {\n")
 

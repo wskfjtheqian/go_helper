@@ -14,7 +14,7 @@ class GoLangStruct2ProtobufIntention : GoBaseIntentionAction(), HighPriorityActi
     }
 
     override fun isAvailable(project: Project, editor: Editor?, element: PsiElement): Boolean {
-        var element = PsiTreeUtil.findFirstParent(element) { element -> element is GoTypeSpec }
+        val element = PsiTreeUtil.findFirstParent(element) { it -> it is GoTypeSpec }
         var struct = PsiTreeUtil.findChildOfType(element, GoStructType::class.java)
         return null != struct
     }
@@ -26,12 +26,12 @@ class GoLangStruct2ProtobufIntention : GoBaseIntentionAction(), HighPriorityActi
         var text = StringBuilder()
         text.append(Utils.commentToBack(Utils.getFieldComment(type.parent)))
         text.append("message ")
-        text.append(Utils.nameUnderline(type.identifier.text))
+        text.append(Utils.nameUnderline(Utils.deletePackage(type.identifier.text)))
 
         text.append(" {\n")
 
-        var names = struct!!.fieldDefinitions
-        var field = struct!!.fieldDeclarationList
+        val names = struct!!.fieldDefinitions
+        val field = struct.fieldDeclarationList
 
         var index = 1
         for (i in 0 until field.size) {
@@ -39,7 +39,7 @@ class GoLangStruct2ProtobufIntention : GoBaseIntentionAction(), HighPriorityActi
                 text.append("\t")
                 text.append(Utils.toType(field[i].type!!, true))
                 text.append(" ")
-                text.append(Utils.nameUnderline(names[i].identifier!!.text))
+                text.append(Utils.nameUnderline(Utils.deletePackage(names[i].identifier!!.text)))
                 text.append(" = ")
                 text.append(index)
                 text.append(";")

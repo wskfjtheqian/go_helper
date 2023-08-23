@@ -62,16 +62,10 @@ object Utils {
     }
 
     private fun split(text: String): MutableList<String> {
-        var temp = text
-        var index = text.indexOf(".")
-        if (-1 != index) {
-            temp = temp.substring(index + 1)
-        }
-
-        val matcher = Pattern.compile("[A-Z_]").matcher(temp)
+        val matcher = Pattern.compile("[A-Z_]").matcher(text)
         val list: MutableList<String> = ArrayList()
 
-        index = 0
+        var index = 0
         while (matcher.find()) {
             list.add(text.substring(index, matcher.start()))
             index = matcher.start()
@@ -137,5 +131,14 @@ object Utils {
             buffer.append(", ").append(it)
         }
         return buffer.insert(0, "\t//").toString()
+    }
+
+    //删除包名
+    fun deletePackage(text: String): String {
+        val index = text.indexOf(".")
+        if (-1 != index) {
+            return text.substring(index + 1)
+        }
+        return text
     }
 }
