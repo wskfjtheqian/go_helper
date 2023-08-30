@@ -26,7 +26,7 @@ class GoLangGrpcImplementIntention : GoBaseIntentionAction(), HighPriorityAction
             return
         }
 
-        val type = PsiTreeUtil.findFirstParent(element) { element is GoTypeSpec } as GoTypeSpec
+        val type = PsiTreeUtil.findFirstParent(element) { it is GoTypeSpec } as GoTypeSpec
         val iface = PsiTreeUtil.findChildOfType(type, GoInterfaceType::class.java)
 
         val text = StringBuilder()
