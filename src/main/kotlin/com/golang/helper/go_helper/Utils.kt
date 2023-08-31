@@ -100,14 +100,14 @@ object Utils {
         val list: MutableList<String> = ArrayList()
         var next = element.prevSibling
         while (null != next && (next is GoCommentImpl || next is PsiWhiteSpace)) {
-            if (next is GoCommentImpl) {
+            if (next is GoCommentImpl && isSelfComment(next.prevSibling)) {
                 list.add(next.text.substring(2))
             }
             next = next.prevSibling
         }
 
-        next = element
-        while (null != next && next.text.contains("\n")) {
+        next = element.nextSibling
+        while (null != next && (next is GoCommentImpl || (next is PsiWhiteSpace && !next.text.contains("\n")))) {
             if (next is GoCommentImpl) {
                 list.add(next.text.substring(2))
                 break
@@ -116,6 +116,18 @@ object Utils {
         }
         return list
     }
+
+    private fun isSelfComment(value: PsiElement?): Boolean {
+        var next = value
+        while (null != next && next is PsiWhiteSpace) {
+            if (next.text.contains("\n")) {
+                return true
+            }
+            next = next.prevSibling
+        }
+        return false
+    }
+
 
     fun commentToBack(list: MutableList<String>): String {
         val buffer = StringBuffer()
@@ -128,7 +140,10 @@ object Utils {
     fun commentToLine(list: MutableList<String>): String {
         val buffer = StringBuffer()
         list.forEach {
-            buffer.append(", ").append(it)
+            if (buffer.isNotEmpty()) {
+                buffer.append(", ")
+            }
+            buffer.append(it)
         }
         return buffer.insert(0, "\t//").toString()
     }

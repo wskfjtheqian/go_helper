@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.golang.helper"
-version = "1.1.3-SNAPSHOT"
+version = "1.1.4-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -14,11 +14,11 @@ repositories {
 // Configure Gradle IntelliJ Plugin
 // Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
 intellij {
-    version.set("2023.1.3")
+    version.set("2023.2.1")
     type.set("IU") // Target IDE Platform
 
     plugins.set(listOf(
-            "org.jetbrains.plugins.go:231.9161.14"
+            "org.jetbrains.plugins.go:232.9559.65"
     ))
 }
 

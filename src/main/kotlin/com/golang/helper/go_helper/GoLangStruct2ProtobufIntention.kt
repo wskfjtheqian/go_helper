@@ -34,21 +34,21 @@ class GoLangStruct2ProtobufIntention : GoBaseIntentionAction(), HighPriorityActi
         val field = struct.fieldDeclarationList
 
         var index = 1
-        for (i in 0 until field.size) {
-            if (null != field[i].type) {
+        for (i in 0 until names.size) {
+            if ( names[i] is GoFieldDefinition) {
+                val type = names[i].parent as GoFieldDeclaration
                 text.append("\t")
-                text.append(Utils.toType(field[i].type!!, true))
+                text.append(Utils.toType(type.type!!, true))
                 text.append(" ")
                 text.append(Utils.nameUnderline(Utils.deletePackage(names[i].identifier!!.text)))
                 text.append(" = ")
                 text.append(index)
                 text.append(";")
-                text.append(Utils.commentToLine(Utils.getFieldComment(field[i])))
+                text.append(Utils.commentToLine(Utils.getFieldComment(type)))
                 text.append("\n")
                 index++
             }
         }
-
         text.append("}\n\n")
 
         WindowFactory.show(project, text.toString())

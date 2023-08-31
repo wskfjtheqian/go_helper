@@ -1,6 +1,8 @@
 package com.golang.helper.go_helper
 
 import com.goide.intentions.GoBaseIntentionAction
+import com.goide.psi.GoFieldDeclaration
+import com.goide.psi.GoFieldDefinition
 import com.goide.psi.GoStructType
 import com.goide.psi.GoTypeSpec
 import com.intellij.openapi.actionSystem.AnAction
@@ -31,16 +33,15 @@ class GoLangStruct2StructIntention : GoBaseIntentionAction() {
         text.append(" {\n")
 
         var names = struct!!.fieldDefinitions
-        var field = struct!!.fieldDeclarationList
 
-        for (i in 0 until field.size) {
-            if (null != field[i].type) {
+        for (i in 0 until names.size) {
+            if ( names[i] is GoFieldDefinition) {
                 text.append("\t")
                 text.append(names[i].identifier!!.text)
                 text.append(" : val.")
                 text.append(names[i].identifier!!.text)
                 text.append(",")
-                text.append(Utils.commentToLine(Utils.getFieldComment(field[i])))
+                text.append(Utils.commentToLine(Utils.getFieldComment(names[i].parent)))
                 text.append("\n")
             }
         }
