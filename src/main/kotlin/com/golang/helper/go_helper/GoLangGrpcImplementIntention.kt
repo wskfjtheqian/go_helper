@@ -30,18 +30,10 @@ class GoLangGrpcImplementIntention : GoBaseIntentionAction(), HighPriorityAction
         val iface = PsiTreeUtil.findChildOfType(type, GoInterfaceType::class.java)
 
         val text = StringBuilder()
-        text.append(Utils.commentToBack(Utils.getFieldComment(type.parent)))
-        text.append("service ")
-        text.append(Utils.nameUnderline(Utils.deletePackage(Utils.deletePackage(type.identifier.text))))
-
-        text.append(" {\n")
-
         val msg = StringBuilder()
         iface!!.methods.forEach {
             text.append(toMethod(it))
         }
-
-        text.append("}\n\n")
 
         WindowFactory.show(project, text.toString() + msg.toString())
     }
