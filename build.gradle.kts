@@ -18,7 +18,8 @@ intellij {
     type.set("IU") // Target IDE Platform
 
     plugins.set(listOf(
-            "org.jetbrains.plugins.go:232.9559.65"
+            "org.jetbrains.plugins.go:232.9559.65",
+            "idea.plugin.protoeditor:232.9559.10",
     ))
 }
 

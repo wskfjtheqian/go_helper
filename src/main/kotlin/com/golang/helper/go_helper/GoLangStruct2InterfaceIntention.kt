@@ -9,8 +9,11 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.protobuf.lang.psi.PbMessageBody
+import com.intellij.protobuf.lang.psi.PbMessageDefinition
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import io.netty.handler.codec.protobuf.ProtobufEncoder
 
 class GoLangStruct2InterfaceIntention : GoBaseIntentionAction(), HighPriorityAction {
     override fun getFamilyName(): String {
