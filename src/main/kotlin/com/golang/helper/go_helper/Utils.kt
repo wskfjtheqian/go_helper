@@ -93,7 +93,7 @@ object Utils {
         } else if (text == "int8") {
             return "int32"
         }
-        return nameUnderline(deletePackage(text))
+        return nameCapitalized(deletePackage(text))
     }
 
     fun getFieldComment(element: PsiElement): MutableList<String> {

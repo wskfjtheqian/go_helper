@@ -34,8 +34,6 @@ class GoLangStruct2InterfaceIntention : GoBaseIntentionAction(), HighPriorityAct
         text.append("type ")
         text.append(type.identifier.text)
 
-        text.append("RepoI interface {\n")
-
         var methods = type!!.methods
         for (i in 0 until methods.size) {
             var comm = Utils.commentToBack(Utils.getFieldComment(methods[i]))
@@ -48,7 +46,6 @@ class GoLangStruct2InterfaceIntention : GoBaseIntentionAction(), HighPriorityAct
             text.append(" \n\n")
         }
 
-        text.append("}\n\n")
         WindowFactory.show(project,text.toString())
     }
 

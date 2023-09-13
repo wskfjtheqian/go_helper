@@ -31,7 +31,7 @@ class GoLangInterface2GrpcIntention : GoBaseIntentionAction() {
 
             text.append(Utils.commentToBack(Utils.getFieldComment(type.parent)))
             text.append("service ")
-            text.append(Utils.nameUnderline(Utils.deletePackage(type.identifier.text)))
+            text.append(Utils.nameCapitalized(Utils.deletePackage(type.identifier.text)))
 
             text.append(" {\n")
 
@@ -51,12 +51,12 @@ class GoLangInterface2GrpcIntention : GoBaseIntentionAction() {
             text.append(comm)
         }
         text.append("\t rpc ")
-        text.append(Utils.nameUnderline(Utils.deletePackage(it.name!!)))
+        text.append(Utils.nameCapitalized(Utils.deletePackage(it.name!!)))
         text.append("(")
-        text.append(Utils.nameUnderline(Utils.deletePackage(it.name!!)))
-        text.append("_req) returns (")
-        text.append(Utils.nameUnderline(Utils.deletePackage(it.name!!)))
-        text.append("_resp); \n\n")
+        text.append(Utils.nameCapitalized(Utils.deletePackage(it.name!!)))
+        text.append("Req) returns (")
+        text.append(Utils.nameCapitalized(Utils.deletePackage(it.name!!)))
+        text.append("Resp); \n\n")
 
         toReq(msg, it, comm)
         toResp(msg, it, comm)
@@ -70,8 +70,8 @@ class GoLangInterface2GrpcIntention : GoBaseIntentionAction() {
         }
 
         text.append("message ")
-        text.append(Utils.nameUnderline(Utils.deletePackage(method.name!!)))
-        text.append("_req { \n")
+        text.append(Utils.nameCapitalized(Utils.deletePackage(method.name!!)))
+        text.append("Req { \n")
 
         val parameters = method.signature!!.parameters.definitionList
         val parametersTypes = method.signature!!.parameters.parameterDeclarationList
@@ -100,8 +100,8 @@ class GoLangInterface2GrpcIntention : GoBaseIntentionAction() {
             text.append("\n")
         }
         text.append("message ")
-        text.append(Utils.nameUnderline(Utils.deletePackage(method.name!!)))
-        text.append("_resp { \n")
+        text.append(Utils.nameCapitalized(Utils.deletePackage(method.name!!)))
+        text.append("Resp { \n")
 
         var result = method.signature!!.result
         if (null != result) {

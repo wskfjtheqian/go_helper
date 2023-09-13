@@ -26,7 +26,7 @@ class GoLangStruct2ProtobufIntention : GoBaseIntentionAction(), HighPriorityActi
         var text = StringBuilder()
         text.append(Utils.commentToBack(Utils.getFieldComment(type.parent)))
         text.append("message ")
-        text.append(Utils.nameUnderline(Utils.deletePackage(type.identifier.text)))
+        text.append(Utils.nameCapitalized(Utils.deletePackage(type.identifier.text)))
 
         text.append(" {\n")
 
