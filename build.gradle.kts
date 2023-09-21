@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.golang.helper"
-version = "1.1.4-SNAPSHOT"
+version = "1.1.7-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -19,7 +19,7 @@ intellij {
 
     plugins.set(listOf(
             "org.jetbrains.plugins.go:232.9559.65",
-            "idea.plugin.protoeditor:232.9559.10",
+//            "idea.plugin.protoeditor:232.9559.10",
     ))
 }
 

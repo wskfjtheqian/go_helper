@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class WindowFactory implements ToolWindowFactory {
@@ -24,6 +25,7 @@ public class WindowFactory implements ToolWindowFactory {
         ContentFactory contentFactory = ContentFactory.getInstance();
         Content content = contentFactory.createContent( editCode, "", false);
         toolWindow.getContentManager().addContent(content);
+
     }
 
     public static void show(Project project, String text) {

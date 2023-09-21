@@ -76,9 +76,30 @@ object Utils {
         return list
     }
 
+    var typeMap = mapOf(
+            "int" to "uint64",
+            "uint" to "uint32",
+            "int8" to "int32",
+            "uint8" to "uint32",
+            "int16" to "int32",
+            "uint16" to "uint32",
+            "int32" to "int32",
+            "uint32" to "uint32",
+            "int64" to "int64",
+            "uint64" to "uint64",
+            "float32" to "float",
+            "float64" to "double",
+            "string" to "string",
+            "bool" to "bool",
+    )
+
     fun toType(typ: GoType, b: Boolean): String {
         if (typ is GoArrayOrSliceType) {
-            return "repeated " + toType(typ.type, false)
+            var temp = toType(typ.type, false)
+            if(temp == "Byte"){
+                return "bytes"
+            }
+            return "repeated " +temp
         } else if (typ is GoMapType) {
             return "map<" + toType(typ.keyType!!, true) + ", " + toType(typ.valueType!!, true) + ">"
         } else if (typ is GoPointerType) {
@@ -88,10 +109,9 @@ object Utils {
             return toType(typ.type!!, true)
         }
         var text = typ.presentationText
-        if (text == "int") {
-            return "int32"
-        } else if (text == "int8") {
-            return "int32"
+        var value = typeMap[text]
+        if (value != null) {
+            return value
         }
         return nameCapitalized(deletePackage(text))
     }
